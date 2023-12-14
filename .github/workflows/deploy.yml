@@ -20,15 +20,23 @@ jobs:
     #   MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
     #   MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
     #   PORT: 8080
-    env: # this is to connect to the MongoDB service container
+    # env: # this is to connect to the MongoDB service container given we run on image node:16
+    #   MONGODB_CONNECTION_PROTOCOL: mongodb # this is a required syntax to connect to the service container
+    #   MONGODB_CLUSTER_ADDRESS: mongodb-testing # github makes it so simple in term of networking to connect with service containers
+    #   MONGODB_USERNAME: root
+    #   MONGODB_PASSWORD: example
+    #   PORT: 8080
+    env: # this is to connect to the MongoDB service container given we run on ubuntu-latest
       MONGODB_CONNECTION_PROTOCOL: mongodb # this is a required syntax to connect to the service container
-      MONGODB_CLUSTER_ADDRESS: mongodb-testing # github makes it so simple in term of networking to connect with service containers
+      MONGODB_CLUSTER_ADDRESS: 127.0.0.1:27017 # we need to assign a port to the service container 
       MONGODB_USERNAME: root
       MONGODB_PASSWORD: example
       PORT: 8080
     services: # not run on the runner, but as a container on github servers
       mongodb-testing: #any name you like
         image: mongo
+        ports: #mapping the port from the machine to the image
+          - 27017:27017
         env: # we create a new database
           MONGO_INITDB_ROOT_USERNAME: root
           MONGO_INITDB_ROOT_PASSWORD: example
